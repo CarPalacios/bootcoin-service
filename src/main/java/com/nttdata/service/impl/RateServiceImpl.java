@@ -1,6 +1,7 @@
 package com.nttdata.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.nttdata.model.Rate;
 import com.nttdata.repository.RateRepository;
@@ -9,6 +10,7 @@ import com.nttdata.service.RateService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Service
 public class RateServiceImpl implements RateService {
   
   @Autowired
