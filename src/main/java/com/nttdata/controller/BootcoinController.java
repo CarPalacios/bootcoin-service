@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nttdata.model.Bootcoin;
+import com.nttdata.model.Client;
 import com.nttdata.model.Rate;
+import com.nttdata.repository.ClientRepository;
 import com.nttdata.service.BootcoinService;
 import com.nttdata.service.RateService;
 
@@ -33,6 +35,9 @@ public class BootcoinController {
 
   @Autowired
   private RateService rateService;
+  
+  @Autowired
+  private ClientRepository clientrepo;
   
   @GetMapping
   public Mono<ResponseEntity<Flux<Bootcoin>>> findAll() {
@@ -59,13 +64,18 @@ public class BootcoinController {
   public Mono<ResponseEntity<Bootcoin>> 
     create(@RequestBody Bootcoin bootcoin, final ServerHttpRequest request) {
 
-    return service.create(bootcoin)
-    .map(createdObject -> {
-      return ResponseEntity
-          .created(URI.create(request.getURI().toString().concat(createdObject.getId())))
-              .contentType(MediaType.APPLICATION_JSON)
-              .body(createdObject);
-    });
+    Mono<Client> client = clientrepo.findByIdentityNumber(bootcoin.getClientNumber().getIdentityNumber());
+    
+    return client
+        .flatMap(c -> service.create(bootcoin)
+            .map(createdObject -> {
+              createdObject.setClientNumber(c);              
+              return ResponseEntity
+                  .created(URI.create(request.getURI().toString().concat(createdObject.getId())))
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .body(createdObject);
+            }))
+        .defaultIfEmpty(new ResponseEntity<Bootcoin>(HttpStatus.NOT_FOUND));
 }
   
   
@@ -79,7 +89,7 @@ public class BootcoinController {
     return monoDatabase
         .zipWith(monoBootcoin, (db, bc) -> {
           db.setId(id);
-          db.setDocumentNumber(bc.getDocumentNumber());
+//          db.setDocumentNumber(bc.getDocumentNumber());
           db.setCellphoneNumber(bc.getCellphoneNumber());
           db.setEmail(bc.getEmail());
           db.setQuantityCoins(bc.getQuantityCoins());

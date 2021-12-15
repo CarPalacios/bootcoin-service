@@ -22,8 +22,11 @@ public class Bootcoin {
   @Id
   private String id;
   
-  @Field(name = "document_number")
-  private String documentNumber;
+//  @Field(name = "document_number")
+//  private String documentNumber;
+  
+  @Field(name = "client_number")
+  private Client clientNumber; 
   
   @Field(name = "cellphone_number")
   private String cellphoneNumber;
