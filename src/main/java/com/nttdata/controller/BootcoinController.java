@@ -69,7 +69,7 @@ public class BootcoinController {
 }
   
   
-  @PutMapping("/id")
+  @PutMapping("/{id}")
   public Mono<ResponseEntity<Bootcoin>> update(@PathVariable String id, @RequestBody Bootcoin bootcoin) {
     
     Mono<Bootcoin> monoDatabase = service.findById(id);
@@ -95,25 +95,31 @@ public class BootcoinController {
   }
   
   @PutMapping("/rate")
-  public Mono<ResponseEntity<Rate>> update(@PathVariable String id, @RequestBody Rate rate) {
+  public Mono<ResponseEntity<Rate>> update(@RequestBody Rate rate) {
     
-    Mono<Rate> monoDatabase = rateService.findById(id);
+    return rateService.update(rate)
+      .map(c -> ResponseEntity
+      .ok()
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(c));
     
-    Mono<Rate> monoRate = Mono.just(rate);
-    
-    return monoDatabase
-        .zipWith(monoRate, (db, mr) -> {
-          db.setId(id);
-          db.setPurchaseRate(mr.getPurchaseRate());
-          db.setSaleRate(mr.getSaleRate());
-          return db;
-        })
-        .flatMap(rateService::update)
-        .map(c -> ResponseEntity
-        .ok()
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(c))
-        .defaultIfEmpty(new ResponseEntity<Rate>(HttpStatus.NOT_FOUND));
+//    Mono<Rate> monoDatabase = rateService.findById(id);
+//    
+//    Mono<Rate> monoRate = Mono.just(rate);
+//    
+//    return monoDatabase
+//        .zipWith(monoRate, (db, mr) -> {
+//          db.setId(id);
+//          db.setPurchaseRate(mr.getPurchaseRate());
+//          db.setSaleRate(mr.getSaleRate());
+//          return db;
+//        })
+//        .flatMap(rateService::update)
+//        .map(c -> ResponseEntity
+//        .ok()
+//        .contentType(MediaType.APPLICATION_JSON)
+//        .body(c))
+//        .defaultIfEmpty(new ResponseEntity<Rate>(HttpStatus.NOT_FOUND));
     
   } 
   
