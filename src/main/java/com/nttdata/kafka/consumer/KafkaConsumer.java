@@ -6,10 +6,8 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nttdata.model.Account;
-import com.nttdata.model.Bootcoin;
 import com.nttdata.model.Client;
 import com.nttdata.repository.AccountRepository;
-import com.nttdata.repository.BootcoinRepository;
 import com.nttdata.repository.ClientRepository;
 
 import lombok.extern.slf4j.Slf4j;
